@@ -87,7 +87,7 @@ const HeroSection = ({ onStartRequest }: HeroSectionProps) => {
           <div className="space-y-4">
             <Button
               onClick={onStartRequest}
-              variant="brasil"
+              variant="zampieri"
               size="hero"
               className="text-lg font-semibold"
             >

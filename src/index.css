@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Cores base - tons brasileiros modernos */
+    /* Cores base - baseadas na logo do Colégio Zampieri */
     --background: 0 0% 99%;
     --foreground: 210 12% 16%;
 
@@ -16,19 +16,20 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 12% 16%;
 
-    /* Verde brasileiro moderno */
-    --primary: 158 64% 32%;
+    /* Verde escuro da logo Zampieri */
+    --primary: 140 65% 28%;
     --primary-foreground: 0 0% 98%;
-    --primary-glow: 158 64% 45%;
+    --primary-glow: 140 65% 40%;
 
-    /* Amarelo brasileiro suave */
-    --secondary: 45 93% 47%;
-    --secondary-foreground: 210 12% 16%;
+    /* Vermelho da logo Zampieri */
+    --secondary: 0 75% 55%;
+    --secondary-foreground: 0 0% 98%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 45 93% 88%;
+    /* Dourado/amarelo da coroa */
+    --accent: 45 85% 70%;
     --accent-foreground: 210 12% 16%;
 
     --destructive: 0 84.2% 60.2%;
@@ -36,11 +37,11 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 158 64% 32%;
+    --ring: 140 65% 28%;
 
-    /* Gradientes brasileiros */
+    /* Gradientes baseados na logo Zampieri */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-brasil: linear-gradient(135deg, hsl(158 64% 32%), hsl(45 93% 47%));
+    --gradient-zampieri: linear-gradient(135deg, hsl(140 65% 28%), hsl(0 75% 55%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 99%), hsl(210 40% 98%));
 
     /* Sombras elegantes */

@@ -402,7 +402,7 @@ const PasseFacilTicket = () => {
             <p className="text-muted-foreground">
               Sua requisição de bilhete único foi enviada com sucesso. Você receberá um retorno em breve.
             </p>
-            <Button onClick={resetForm} variant="brasil" size="lg" className="w-full">
+            <Button onClick={resetForm} variant="zampieri" size="lg" className="w-full">
               Nova Requisição
             </Button>
           </CardContent>
@@ -412,17 +412,26 @@ const PasseFacilTicket = () => {
   return <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl shadow-card">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-primary rounded-lg">
-              <CreditCard className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">
+              <img 
+                src="/lovable-uploads/ee3f8a19-a099-4c6d-a6de-d9ddb3397a34.png" 
+                alt="Colégio Zampieri" 
+                className="w-16 h-16 object-contain"
+              />
             </div>
-            <div>
-              <CardTitle className="text-2xl font-bold text-primary">
-                Passe Fácil - Requisição de Bilhete Único
-              </CardTitle>
-              <p className="text-muted-foreground">
-                Sistema de solicitação de bilhete único estudantil
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-primary rounded-lg">
+                <CreditCard className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-bold text-primary">
+                  Passe Fácil - Colégio Zampieri
+                </CardTitle>
+                <p className="text-muted-foreground">
+                  Sistema de solicitação de bilhete único estudantil
+                </p>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -722,7 +731,7 @@ const PasseFacilTicket = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={handleTicketFormSubmit} disabled={loading} variant="brasil" size="lg" className="flex-1">
+                <Button onClick={handleTicketFormSubmit} disabled={loading} variant="zampieri" size="lg" className="flex-1">
                   {loading ? "Enviando..." : "Enviar Requisição"}
                 </Button>
                 <Button onClick={resetForm} variant="outline" size="lg">
@@ -820,7 +829,7 @@ const PasseFacilTicket = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={handleManualSubmit} disabled={loading} variant="brasil" size="lg" className="flex-1">
+                <Button onClick={handleManualSubmit} disabled={loading} variant="zampieri" size="lg" className="flex-1">
                   {loading ? "Enviando..." : "Enviar Requisição"}
                 </Button>
                 <Button onClick={resetForm} variant="outline" size="lg">

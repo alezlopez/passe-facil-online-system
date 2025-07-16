@@ -17,6 +17,7 @@ interface StudentData {
   CPF_resp_fin: string;
   whatsapp_fin: string;
   email_resp: string;
+  codigo_resp_fin: number;
 }
 
 interface TicketFormData {
@@ -745,7 +746,7 @@ const PasseFacilTicket = () => {
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <Button onClick={handleTicketFormSubmit} disabled={loading} variant="zampieri" size="lg" className="flex-1">
                   {loading ? "Enviando..." : "Enviar Requisição"}
                 </Button>

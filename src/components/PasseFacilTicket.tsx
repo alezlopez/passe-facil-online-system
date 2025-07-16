@@ -16,7 +16,6 @@ interface StudentData {
   whatsapp_fin: string;
   email_resp: string;
 }
-
 interface ManualFormData {
   nomeAluno: string;
   nomeResponsavel: string;
@@ -28,7 +27,6 @@ interface ManualFormData {
   serie: string;
   turno: string;
 }
-
 const PasseFacilTicket = () => {
   const [step, setStep] = useState<'hero' | 'search' | 'select' | 'display' | 'manual' | 'success'>('search');
   const [cpf, setCpf] = useState('');
@@ -46,18 +44,17 @@ const PasseFacilTicket = () => {
     turno: ''
   });
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
-
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCPF(e.target.value);
     setCpf(formatted);
   };
-
   const searchStudent = async () => {
     if (!cpf) {
       toast({
@@ -67,18 +64,15 @@ const PasseFacilTicket = () => {
       });
       return;
     }
-
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('alunosIntegraSae')
-        .select('*')
-        .eq('CPF_resp_fin', cpf.replace(/\D/g, ''));
-
+      const {
+        data,
+        error
+      } = await supabase.from('alunosIntegraSae').select('*').eq('CPF_resp_fin', cpf.replace(/\D/g, ''));
       if (error) {
         throw error;
       }
-
       if (data && data.length > 0) {
         if (data.length === 1) {
           // Apenas um aluno encontrado
@@ -86,7 +80,7 @@ const PasseFacilTicket = () => {
           setStep('display');
           toast({
             title: "Aluno encontrado!",
-            description: `Dados de ${data[0].aluno} carregados com sucesso.`,
+            description: `Dados de ${data[0].aluno} carregados com sucesso.`
           });
         } else {
           // Múltiplos alunos encontrados
@@ -94,15 +88,18 @@ const PasseFacilTicket = () => {
           setStep('select');
           toast({
             title: "Múltiplos alunos encontrados!",
-            description: `Encontrados ${data.length} alunos para este CPF. Selecione o aluno desejado.`,
+            description: `Encontrados ${data.length} alunos para este CPF. Selecione o aluno desejado.`
           });
         }
       } else {
         setStep('manual');
-        setManualData(prev => ({ ...prev, cpfResponsavel: cpf }));
+        setManualData(prev => ({
+          ...prev,
+          cpfResponsavel: cpf
+        }));
         toast({
           title: "Aluno não encontrado",
-          description: "Preencha os dados manualmente abaixo.",
+          description: "Preencha os dados manualmente abaixo."
         });
       }
     } catch (error) {
@@ -116,11 +113,9 @@ const PasseFacilTicket = () => {
       setLoading(false);
     }
   };
-
   const handleManualSubmit = async () => {
     const requiredFields = ['nomeAluno', 'nomeResponsavel', 'cpfResponsavel', 'endereco', 'telefone', 'email', 'escola', 'serie', 'turno'];
     const missingFields = requiredFields.filter(field => !manualData[field as keyof ManualFormData]);
-    
     if (missingFields.length > 0) {
       toast({
         title: "Campos obrigatórios",
@@ -129,16 +124,15 @@ const PasseFacilTicket = () => {
       });
       return;
     }
-
     setLoading(true);
     try {
       // Aqui você pode salvar os dados ou processar a requisição
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simula processamento
-      
+
       setStep('success');
       toast({
         title: "Requisição enviada!",
-        description: "Sua requisição de bilhete único foi enviada com sucesso.",
+        description: "Sua requisição de bilhete único foi enviada com sucesso."
       });
     } catch (error) {
       console.error('Erro ao enviar requisição:', error);
@@ -151,19 +145,17 @@ const PasseFacilTicket = () => {
       setLoading(false);
     }
   };
-
   const processTicketRequest = async () => {
     if (!studentData) return;
-
     setLoading(true);
     try {
       // Aqui você pode processar a requisição com os dados encontrados
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simula processamento
-      
+
       setStep('success');
       toast({
         title: "Requisição enviada!",
-        description: "Sua requisição de bilhete único foi enviada com sucesso.",
+        description: "Sua requisição de bilhete único foi enviada com sucesso."
       });
     } catch (error) {
       console.error('Erro ao processar requisição:', error);
@@ -176,16 +168,14 @@ const PasseFacilTicket = () => {
       setLoading(false);
     }
   };
-
   const selectStudent = (student: StudentData) => {
     setStudentData(student);
     setStep('display');
     toast({
       title: "Aluno selecionado!",
-      description: `Dados de ${student.aluno} carregados com sucesso.`,
+      description: `Dados de ${student.aluno} carregados com sucesso.`
     });
   };
-
   const resetForm = () => {
     setStep('search');
     setCpf('');
@@ -210,8 +200,7 @@ const PasseFacilTicket = () => {
   // }
 
   if (step === 'success') {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+    return <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-card">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center">
@@ -225,22 +214,14 @@ const PasseFacilTicket = () => {
             <p className="text-muted-foreground">
               Sua requisição de bilhete único foi enviada com sucesso. Você receberá um retorno em breve.
             </p>
-            <Button 
-              onClick={resetForm}
-              variant="brasil"
-              size="lg"
-              className="w-full"
-            >
+            <Button onClick={resetForm} variant="brasil" size="lg" className="w-full">
               Nova Requisição
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+  return <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl shadow-card">
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -259,50 +240,27 @@ const PasseFacilTicket = () => {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {step === 'search' && (
-            <div className="space-y-4">
+          {step === 'search' && <div className="space-y-4">
               <div>
                 <Label htmlFor="cpf" className="text-sm font-medium">
                   CPF do Responsável Financeiro
                 </Label>
-                <p className="text-xs text-muted-foreground mb-2">
-                  Informe o CPF do responsável financeiro pelo aluno
-                </p>
+                <p className="text-xs text-muted-foreground mb-2 font-bold">Deve ser o mesmo CPF que aparece no boleto da mensalidade escolar</p>
                 <div className="relative">
-                  <Input
-                    id="cpf"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    value={cpf}
-                    onChange={handleCPFChange}
-                    maxLength={14}
-                    className="pl-10"
-                  />
+                  <Input id="cpf" type="text" placeholder="000.000.000-00" value={cpf} onChange={handleCPFChange} maxLength={14} className="pl-10" />
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
 
-              <Button
-                onClick={searchStudent}
-                disabled={loading}
-                variant="hero"
-                size="lg"
-                className="w-full"
-              >
-                {loading ? (
-                  "Buscando..."
-                ) : (
-                  <>
+              <Button onClick={searchStudent} disabled={loading} variant="hero" size="lg" className="w-full">
+                {loading ? "Buscando..." : <>
                     <Search className="w-4 h-4" />
                     Buscar Aluno
-                  </>
-                )}
+                  </>}
               </Button>
-            </div>
-          )}
+            </div>}
 
-          {step === 'select' && studentsList.length > 0 && (
-            <div className="space-y-4">
+          {step === 'select' && studentsList.length > 0 && <div className="space-y-4">
               <div className="p-4 bg-accent rounded-lg">
                 <h3 className="font-semibold text-primary mb-2">Múltiplos Alunos Encontrados</h3>
                 <p className="text-sm text-muted-foreground">
@@ -311,12 +269,7 @@ const PasseFacilTicket = () => {
               </div>
 
               <div className="space-y-3">
-                {studentsList.map((student, index) => (
-                  <div
-                    key={`${student.codigo_aluno}-${index}`}
-                    className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
-                    onClick={() => selectStudent(student)}
-                  >
+                {studentsList.map((student, index) => <div key={`${student.codigo_aluno}-${index}`} className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors" onClick={() => selectStudent(student)}>
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
                         <h4 className="font-medium text-primary">{student.aluno}</h4>
@@ -331,23 +284,15 @@ const PasseFacilTicket = () => {
                         Selecionar
                       </Button>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
-              <Button
-                onClick={resetForm}
-                variant="outline"
-                size="lg"
-                className="w-full"
-              >
+              <Button onClick={resetForm} variant="outline" size="lg" className="w-full">
                 Nova Busca
               </Button>
-            </div>
-          )}
+            </div>}
 
-          {step === 'display' && studentData && (
-            <div className="space-y-4">
+          {step === 'display' && studentData && <div className="space-y-4">
               <div className="p-4 bg-accent rounded-lg">
                 <h3 className="font-semibold text-primary mb-3">Dados do Aluno Encontrado</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -373,28 +318,16 @@ const PasseFacilTicket = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  onClick={processTicketRequest}
-                  disabled={loading}
-                  variant="brasil"
-                  size="lg"
-                  className="flex-1"
-                >
+                <Button onClick={processTicketRequest} disabled={loading} variant="brasil" size="lg" className="flex-1">
                   {loading ? "Processando..." : "Confirmar Requisição"}
                 </Button>
-                <Button
-                  onClick={resetForm}
-                  variant="outline"
-                  size="lg"
-                >
+                <Button onClick={resetForm} variant="outline" size="lg">
                   Nova Busca
                 </Button>
               </div>
-            </div>
-          )}
+            </div>}
 
-          {step === 'manual' && (
-            <div className="space-y-4">
+          {step === 'manual' && <div className="space-y-4">
               <div className="p-4 bg-secondary/20 rounded-lg">
                 <h3 className="font-semibold text-primary mb-2">Preenchimento Manual</h3>
                 <p className="text-sm text-muted-foreground">
@@ -405,45 +338,35 @@ const PasseFacilTicket = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="nomeAluno">Nome do Aluno</Label>
-                  <Input
-                    id="nomeAluno"
-                    value={manualData.nomeAluno}
-                    onChange={(e) => setManualData({...manualData, nomeAluno: e.target.value})}
-                    placeholder="Nome completo do aluno"
-                  />
+                  <Input id="nomeAluno" value={manualData.nomeAluno} onChange={e => setManualData({
+                ...manualData,
+                nomeAluno: e.target.value
+              })} placeholder="Nome completo do aluno" />
                 </div>
 
                 <div>
                   <Label htmlFor="nomeResponsavel">Nome do Responsável</Label>
-                  <Input
-                    id="nomeResponsavel"
-                    value={manualData.nomeResponsavel}
-                    onChange={(e) => setManualData({...manualData, nomeResponsavel: e.target.value})}
-                    placeholder="Nome completo do responsável"
-                  />
+                  <Input id="nomeResponsavel" value={manualData.nomeResponsavel} onChange={e => setManualData({
+                ...manualData,
+                nomeResponsavel: e.target.value
+              })} placeholder="Nome completo do responsável" />
                 </div>
 
                 <div>
                   <Label htmlFor="cpfResponsavel">CPF do Responsável</Label>
-                  <Input
-                    id="cpfResponsavel"
-                    value={manualData.cpfResponsavel}
-                    onChange={(e) => setManualData({...manualData, cpfResponsavel: e.target.value})}
-                    placeholder="000.000.000-00"
-                    disabled
-                  />
+                  <Input id="cpfResponsavel" value={manualData.cpfResponsavel} onChange={e => setManualData({
+                ...manualData,
+                cpfResponsavel: e.target.value
+              })} placeholder="000.000.000-00" disabled />
                 </div>
 
                 <div>
                   <Label htmlFor="telefone">Telefone</Label>
                   <div className="relative">
-                    <Input
-                      id="telefone"
-                      value={manualData.telefone}
-                      onChange={(e) => setManualData({...manualData, telefone: e.target.value})}
-                      placeholder="(11) 99999-9999"
-                      className="pl-10"
-                    />
+                    <Input id="telefone" value={manualData.telefone} onChange={e => setManualData({
+                  ...manualData,
+                  telefone: e.target.value
+                })} placeholder="(11) 99999-9999" className="pl-10" />
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
@@ -451,83 +374,58 @@ const PasseFacilTicket = () => {
                 <div className="md:col-span-2">
                   <Label htmlFor="endereco">Endereço</Label>
                   <div className="relative">
-                    <Input
-                      id="endereco"
-                      value={manualData.endereco}
-                      onChange={(e) => setManualData({...manualData, endereco: e.target.value})}
-                      placeholder="Rua, número, bairro, cidade"
-                      className="pl-10"
-                    />
+                    <Input id="endereco" value={manualData.endereco} onChange={e => setManualData({
+                  ...manualData,
+                  endereco: e.target.value
+                })} placeholder="Rua, número, bairro, cidade" className="pl-10" />
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={manualData.email}
-                    onChange={(e) => setManualData({...manualData, email: e.target.value})}
-                    placeholder="email@exemplo.com"
-                  />
+                  <Input id="email" type="email" value={manualData.email} onChange={e => setManualData({
+                ...manualData,
+                email: e.target.value
+              })} placeholder="email@exemplo.com" />
                 </div>
 
                 <div>
                   <Label htmlFor="escola">Escola</Label>
-                  <Input
-                    id="escola"
-                    value={manualData.escola}
-                    onChange={(e) => setManualData({...manualData, escola: e.target.value})}
-                    placeholder="Nome da escola"
-                  />
+                  <Input id="escola" value={manualData.escola} onChange={e => setManualData({
+                ...manualData,
+                escola: e.target.value
+              })} placeholder="Nome da escola" />
                 </div>
 
                 <div>
                   <Label htmlFor="serie">Série</Label>
-                  <Input
-                    id="serie"
-                    value={manualData.serie}
-                    onChange={(e) => setManualData({...manualData, serie: e.target.value})}
-                    placeholder="Ex: 1º ano, 2º ano..."
-                  />
+                  <Input id="serie" value={manualData.serie} onChange={e => setManualData({
+                ...manualData,
+                serie: e.target.value
+              })} placeholder="Ex: 1º ano, 2º ano..." />
                 </div>
 
                 <div>
                   <Label htmlFor="turno">Turno</Label>
-                  <Input
-                    id="turno"
-                    value={manualData.turno}
-                    onChange={(e) => setManualData({...manualData, turno: e.target.value})}
-                    placeholder="Manhã, Tarde ou Noite"
-                  />
+                  <Input id="turno" value={manualData.turno} onChange={e => setManualData({
+                ...manualData,
+                turno: e.target.value
+              })} placeholder="Manhã, Tarde ou Noite" />
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  onClick={handleManualSubmit}
-                  disabled={loading}
-                  variant="brasil"
-                  size="lg"
-                  className="flex-1"
-                >
+                <Button onClick={handleManualSubmit} disabled={loading} variant="brasil" size="lg" className="flex-1">
                   {loading ? "Enviando..." : "Enviar Requisição"}
                 </Button>
-                <Button
-                  onClick={resetForm}
-                  variant="outline"
-                  size="lg"
-                >
+                <Button onClick={resetForm} variant="outline" size="lg">
                   Nova Busca
                 </Button>
               </div>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default PasseFacilTicket;

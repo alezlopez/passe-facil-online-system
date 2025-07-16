@@ -441,7 +441,7 @@ const PasseFacilTicket = () => {
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-primary">
-                  Passe Fácil - Colégio Zampieri
+                  Requisição do Bilhete Único
                 </CardTitle>
                 <p className="text-muted-foreground">
                   Sistema de solicitação de bilhete único estudantil

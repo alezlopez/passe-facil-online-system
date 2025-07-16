@@ -30,9 +30,10 @@ interface ManualFormData {
 }
 
 const PasseFacilTicket = () => {
-  const [step, setStep] = useState<'hero' | 'search' | 'display' | 'manual' | 'success'>('search');
+  const [step, setStep] = useState<'hero' | 'search' | 'select' | 'display' | 'manual' | 'success'>('search');
   const [cpf, setCpf] = useState('');
   const [studentData, setStudentData] = useState<StudentData | null>(null);
+  const [studentsList, setStudentsList] = useState<StudentData[]>([]);
   const [manualData, setManualData] = useState<ManualFormData>({
     nomeAluno: '',
     nomeResponsavel: '',
@@ -72,20 +73,30 @@ const PasseFacilTicket = () => {
       const { data, error } = await supabase
         .from('alunosIntegraSae')
         .select('*')
-        .eq('CPF_resp_fin', cpf.replace(/\D/g, ''))
-        .maybeSingle();
+        .eq('CPF_resp_fin', cpf.replace(/\D/g, ''));
 
       if (error) {
         throw error;
       }
 
-      if (data) {
-        setStudentData(data);
-        setStep('display');
-        toast({
-          title: "Aluno encontrado!",
-          description: `Dados de ${data.aluno} carregados com sucesso.`,
-        });
+      if (data && data.length > 0) {
+        if (data.length === 1) {
+          // Apenas um aluno encontrado
+          setStudentData(data[0]);
+          setStep('display');
+          toast({
+            title: "Aluno encontrado!",
+            description: `Dados de ${data[0].aluno} carregados com sucesso.`,
+          });
+        } else {
+          // Múltiplos alunos encontrados
+          setStudentsList(data);
+          setStep('select');
+          toast({
+            title: "Múltiplos alunos encontrados!",
+            description: `Encontrados ${data.length} alunos para este CPF. Selecione o aluno desejado.`,
+          });
+        }
       } else {
         setStep('manual');
         setManualData(prev => ({ ...prev, cpfResponsavel: cpf }));
@@ -166,10 +177,20 @@ const PasseFacilTicket = () => {
     }
   };
 
+  const selectStudent = (student: StudentData) => {
+    setStudentData(student);
+    setStep('display');
+    toast({
+      title: "Aluno selecionado!",
+      description: `Dados de ${student.aluno} carregados com sucesso.`,
+    });
+  };
+
   const resetForm = () => {
     setStep('search');
     setCpf('');
     setStudentData(null);
+    setStudentsList([]);
     setManualData({
       nomeAluno: '',
       nomeResponsavel: '',
@@ -276,6 +297,51 @@ const PasseFacilTicket = () => {
                     Buscar Aluno
                   </>
                 )}
+              </Button>
+            </div>
+          )}
+
+          {step === 'select' && studentsList.length > 0 && (
+            <div className="space-y-4">
+              <div className="p-4 bg-accent rounded-lg">
+                <h3 className="font-semibold text-primary mb-2">Múltiplos Alunos Encontrados</h3>
+                <p className="text-sm text-muted-foreground">
+                  Encontrados {studentsList.length} alunos para este CPF. Selecione o aluno desejado:
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {studentsList.map((student, index) => (
+                  <div
+                    key={`${student.codigo_aluno}-${index}`}
+                    className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+                    onClick={() => selectStudent(student)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <h4 className="font-medium text-primary">{student.aluno}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Curso: {student.curso_aluno}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Código: {student.codigo_aluno}
+                        </p>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        Selecionar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                onClick={resetForm}
+                variant="outline"
+                size="lg"
+                className="w-full"
+              >
+                Nova Busca
               </Button>
             </div>
           )}

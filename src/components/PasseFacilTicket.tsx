@@ -747,7 +747,7 @@ const PasseFacilTicket = () => {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button onClick={handleTicketFormSubmit} disabled={loading} variant="zampieri" size="lg" className="flex-1">
+                <Button onClick={handleTicketFormSubmit} disabled={loading} variant="verde" size="lg" className="flex-1">
                   {loading ? "Enviando..." : "Enviar Requisição"}
                 </Button>
                 <Button onClick={resetForm} variant="outline" size="lg">

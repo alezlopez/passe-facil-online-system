@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, User, Search, FileText, MapPin, Calendar, Phone, IdCard } from "lucide-react";
+import { CreditCard, User, Search, FileText, MapPin, Calendar, Phone, IdCard, CheckCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 // import HeroSection from "./HeroSection"; // Comentado - não preciso da tela inicial
@@ -85,6 +86,7 @@ const PasseFacilTicket = () => {
     estado: ''
   });
   const [loading, setLoading] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const {
     toast
   } = useToast();
@@ -161,14 +163,27 @@ const PasseFacilTicket = () => {
     
     setLoading(true);
     try {
-      // Processar os dados do formulário
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setStep('success');
-      toast({
-        title: "Requisição enviada!",
-        description: "Sua requisição de bilhete único foi enviada com sucesso."
+      // Enviar dados para o webhook do N8N
+      const response = await fetch('https://n8n.colegiozampieri.com/webhook/bilheteunico', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...ticketFormData,
+          cpfResponsavel: cpf,
+          timestamp: new Date().toISOString(),
+          origem: 'PasseFacil'
+        })
       });
+      
+      if (!response.ok) {
+        throw new Error('Erro ao enviar dados para o webhook');
+      }
+      
+      // Mostrar dialog de sucesso
+      setShowSuccessDialog(true);
+      
     } catch (error) {
       console.error('Erro ao enviar requisição:', error);
       toast({
@@ -839,6 +854,51 @@ const PasseFacilTicket = () => {
             </div>}
         </CardContent>
       </Card>
+      
+      {/* Dialog de Sucesso */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-gradient-primary rounded-full">
+                <CheckCircle className="w-8 h-8 text-white" />
+              </div>
+              <DialogTitle className="text-xl font-bold text-primary">
+                Formulário enviado com sucesso!
+              </DialogTitle>
+            </div>
+            <DialogDescription className="text-sm text-muted-foreground space-y-3">
+              <p>
+                Iremos seguir com o pedido do bilhete único.
+              </p>
+              <p>
+                Quando essa etapa for concluída, avisaremos para que você acesse{' '}
+                <a 
+                  href="https://estudante.sptrans.com.br" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                >
+                  https://estudante.sptrans.com.br
+                </a>
+                {' '}para validar o cadastro e pagar a taxa de emissão.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-6 flex justify-center">
+            <Button 
+              onClick={() => {
+                setShowSuccessDialog(false);
+                resetForm();
+              }} 
+              variant="zampieri" 
+              size="lg"
+            >
+              Nova Requisição
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
 export default PasseFacilTicket;

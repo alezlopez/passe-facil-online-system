@@ -67,6 +67,7 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-brasil': 'var(--gradient-brasil)',
+				'gradient-zampieri': 'var(--gradient-zampieri)',
 				'gradient-subtle': 'var(--gradient-subtle)'
 			},
 			boxShadow: {

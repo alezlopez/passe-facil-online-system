@@ -73,9 +73,9 @@ const PasseFacilTicket = () => {
         .from('alunosIntegraSae')
         .select('*')
         .eq('CPF_resp_fin', cpf.replace(/\D/g, ''))
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         throw error;
       }
 

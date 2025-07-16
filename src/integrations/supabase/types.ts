@@ -29,6 +29,7 @@ export type Database = {
           id: number | null
           id_curso: number | null
           pago: boolean | null
+          RA: string | null
           valor: string | null
           vencimento: string | null
           whatsapp_fin: string | null
@@ -47,6 +48,7 @@ export type Database = {
           id?: number | null
           id_curso?: number | null
           pago?: boolean | null
+          RA?: string | null
           valor?: string | null
           vencimento?: string | null
           whatsapp_fin?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           id?: number | null
           id_curso?: number | null
           pago?: boolean | null
+          RA?: string | null
           valor?: string | null
           vencimento?: string | null
           whatsapp_fin?: string | null

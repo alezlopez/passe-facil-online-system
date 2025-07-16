@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { CreditCard, User, Search, FileText, MapPin, Calendar, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import HeroSection from "./HeroSection";
+// import HeroSection from "./HeroSection"; // Comentado - não preciso da tela inicial
 
 interface StudentData {
   aluno: string;
@@ -30,7 +30,7 @@ interface ManualFormData {
 }
 
 const PasseFacilTicket = () => {
-  const [step, setStep] = useState<'hero' | 'search' | 'display' | 'manual' | 'success'>('hero');
+  const [step, setStep] = useState<'hero' | 'search' | 'display' | 'manual' | 'success'>('search');
   const [cpf, setCpf] = useState('');
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [manualData, setManualData] = useState<ManualFormData>({
@@ -167,7 +167,7 @@ const PasseFacilTicket = () => {
   };
 
   const resetForm = () => {
-    setStep('hero');
+    setStep('search');
     setCpf('');
     setStudentData(null);
     setManualData({
@@ -183,9 +183,10 @@ const PasseFacilTicket = () => {
     });
   };
 
-  if (step === 'hero') {
-    return <HeroSection onStartRequest={() => setStep('search')} />;
-  }
+  // Comentado - não preciso da tela inicial
+  // if (step === 'hero') {
+  //   return <HeroSection onStartRequest={() => setStep('search')} />;
+  // }
 
   if (step === 'success') {
     return (
@@ -241,8 +242,11 @@ const PasseFacilTicket = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="cpf" className="text-sm font-medium">
-                  CPF do Responsável
+                  CPF do Responsável Financeiro
                 </Label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Informe o CPF do responsável financeiro pelo aluno
+                </p>
                 <div className="relative">
                   <Input
                     id="cpf"
@@ -317,7 +321,7 @@ const PasseFacilTicket = () => {
                   variant="outline"
                   size="lg"
                 >
-                  Voltar
+                  Nova Busca
                 </Button>
               </div>
             </div>
@@ -449,7 +453,7 @@ const PasseFacilTicket = () => {
                   variant="outline"
                   size="lg"
                 >
-                  Voltar
+                  Nova Busca
                 </Button>
               </div>
             </div>

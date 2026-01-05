@@ -11,13 +11,15 @@ import { supabase } from "@/integrations/supabase/client";
 // import HeroSection from "./HeroSection"; // Comentado - não preciso da tela inicial
 
 interface StudentData {
-  aluno: string;
-  codigo_aluno: number;
-  curso_aluno: string;
-  CPF_resp_fin: string;
-  whatsapp_fin: string;
-  email_resp: string;
-  codigo_resp_fin: number;
+  nome_aluno: string;
+  codigo_aluno: string;
+  curso: string;
+  nome_mae: string | null;
+  cpf_mae: string | null;
+  telefone_mae: string | null;
+  nome_pai: string | null;
+  cpf_pai: string | null;
+  celular_pai: string | null;
 }
 
 interface TicketFormData {
@@ -207,30 +209,38 @@ const PasseFacilTicket = () => {
     }
     setLoading(true);
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('alunosIntegraSae').select('*').eq('CPF_resp_fin', cpf.replace(/\D/g, ''));
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      const { data, error } = await supabase
+        .from('alunnos_26')
+        .select('*')
+        .or(`cpf_mae.eq.${cpfLimpo},cpf_pai.eq.${cpfLimpo}`);
+      
       if (error) {
         throw error;
       }
       if (data && data.length > 0) {
         if (data.length === 1) {
           // Apenas um aluno encontrado
-          setStudentData(data[0]);
+          const aluno = data[0] as StudentData;
+          setStudentData(aluno);
+          
+          // Determinar qual responsável corresponde ao CPF inserido
+          const isMae = aluno.cpf_mae?.replace(/\D/g, '') === cpfLimpo;
+          const responsavelNome = isMae ? aluno.nome_mae : aluno.nome_pai;
+          const responsavelTelefone = isMae ? aluno.telefone_mae : aluno.celular_pai;
           
           // Preenche o formulário com os dados do aluno
           setTicketFormData({
-            nomeAluno: data[0].aluno,
-            curso: data[0].curso_aluno,
+            nomeAluno: aluno.nome_aluno || '',
+            curso: aluno.curso || '',
             turno: '',
             ra: '',
             rg: '',
             dataEmissaoRG: '',
             cpfAluno: '',
-            celular: data[0].whatsapp_fin,
-            telefoneFixo: data[0].whatsapp_fin,
-            responsavel: '',
+            celular: responsavelTelefone || '',
+            telefoneFixo: responsavelTelefone || '',
+            responsavel: responsavelNome || '',
             cep: '',
             endereco: '',
             numero: '',
@@ -243,11 +253,11 @@ const PasseFacilTicket = () => {
           setStep('display');
           toast({
             title: "Aluno encontrado!",
-            description: `Dados de ${data[0].aluno} carregados com sucesso. Preencha os campos restantes.`
+            description: `Dados de ${aluno.nome_aluno} carregados com sucesso. Preencha os campos restantes.`
           });
         } else {
           // Múltiplos alunos encontrados
-          setStudentsList(data);
+          setStudentsList(data as StudentData[]);
           setStep('select');
           toast({
             title: "Múltiplos alunos encontrados!",
@@ -334,18 +344,24 @@ const PasseFacilTicket = () => {
   const selectStudent = (student: StudentData) => {
     setStudentData(student);
     
+    // Determinar qual responsável corresponde ao CPF inserido
+    const cpfLimpo = cpf.replace(/\D/g, '');
+    const isMae = student.cpf_mae?.replace(/\D/g, '') === cpfLimpo;
+    const responsavelNome = isMae ? student.nome_mae : student.nome_pai;
+    const responsavelTelefone = isMae ? student.telefone_mae : student.celular_pai;
+    
     // Preenche o formulário com os dados do aluno
     setTicketFormData({
-      nomeAluno: student.aluno,
-      curso: student.curso_aluno,
+      nomeAluno: student.nome_aluno || '',
+      curso: student.curso || '',
       turno: '',
       ra: '',
       rg: '',
       dataEmissaoRG: '',
       cpfAluno: '',
-      celular: student.whatsapp_fin,
-      telefoneFixo: student.whatsapp_fin,
-      responsavel: '',
+      celular: responsavelTelefone || '',
+      telefoneFixo: responsavelTelefone || '',
+      responsavel: responsavelNome || '',
       cep: '',
       endereco: '',
       numero: '',
@@ -358,7 +374,7 @@ const PasseFacilTicket = () => {
     setStep('display');
     toast({
       title: "Aluno selecionado!",
-      description: `Dados de ${student.aluno} carregados com sucesso. Preencha os campos restantes.`
+      description: `Dados de ${student.nome_aluno} carregados com sucesso. Preencha os campos restantes.`
     });
   };
   const resetForm = () => {
@@ -485,9 +501,9 @@ const PasseFacilTicket = () => {
                 {studentsList.map((student, index) => <div key={`${student.codigo_aluno}-${index}`} className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors" onClick={() => selectStudent(student)}>
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <h4 className="font-medium text-primary">{student.aluno}</h4>
+                        <h4 className="font-medium text-primary">{student.nome_aluno}</h4>
                         <p className="text-sm text-muted-foreground">
-                          Curso: {student.curso_aluno}
+                          Curso: {student.curso}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           Código: {student.codigo_aluno}
